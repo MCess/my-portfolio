@@ -1,11 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael Cessaro - Cloud Engineer & AWS Solutions Architect</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
-</body>
+
+  <!-- Header / Navigation -->
+  <header>
+    <nav class="nav-inner">
+      <div class="logo"><strong>Michael Cessaro</strong></div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#platforms">Cloud Platforms</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero" id="home" role="banner">
+      <div class="hero-inner">
+        <h1>Michael Cessaro</h1>
+        <p class="tagline">Cloud Engineer & AWS Solutions Architect — Remote / Digital Nomad</p>
+        <div class="hero-ctas">
+          <a class="btn-contact-me" href="#contact">Contact Me</a>
+          <a class="btn-see-projects" href="#projects">See Projects</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Me -->
+    <section class="about-me" id="about">
+      <h2>About Me</h2>
+      <p>I'm Michael — an AWS-certified Cloud Engineer specializing in secure, scalable infrastructure, automation, and cost optimization. I design IaC pipelines, build resilient architectures, and help teams run reliable cloud-native services.</p>
+      <p>Available for remote engagements, consulting, and longer-term projects. I travel frequently and work as a digital nomad.</p>
+    </section>
+
+    <!-- Skills & Expertise -->
+    <section class="skills" id="skills">
+      <h2>Skills & Expertise</h2>
+      <ul>
+        <li>AWS Solutions Architect</li>
+        <li>Cloud Security & Compliance</li>
+        <li>Infrastructure as Code (Terraform, CloudFormation)</li>
+        <li>Python Scripting & Automation</li>
+        <li>CI/CD, DevOps Pipelines</li>
+        <li>Docker & Kubernetes</li>
+      </ul>
+    </section>
+
+    <!-- Cloud Platforms -->
+    <section class="cloud-platforms" id="platforms">
+      <h2>Cloud Platforms</h2>
+      <p>Experienced across major cloud providers — I design multi-cloud and provider-specific solutions.</p>
+      <div class="logos">
+        <img src="assets/images/aws-logo.png" alt="AWS Logo">
+        <img src="assets/images/azure-logo.png" alt="Azure Logo">
+        <img src="assets/images/gcp-logo.png" alt="GCP Logo">
+      </div>
+    </section>
+
+    <!-- Projects & Portfolio -->
+    <section class="projects" id="projects">
+      <h2>Projects & Portfolio</h2>
+      <div class="project-card">
+        <h3>Cloud Infrastructure Automation</h3>
+        <p>Automated provisioning with Terraform and modular templates; reduced deploy time and manual steps by 40%.</p>
+      </div>
+      <div class="project-card">
+        <h3>AWS Cost Optimization</h3>
+        <p>Implemented monitoring + automation to cut monthly spend by ~30% while improving reliability.</p>
+      </div>
+      <div class="project-card">
+        <h3>Secure CI/CD Pipelines</h3>
+        <p>Built secure pipelines integrating AWS services, container builds, and Kubernetes deployments for scale.</p>
+      </div>
+    </section>
+
+    <!-- Contact Me -->
+    <section class="contact" id="contact">
+        <h2>Contact Me</h2>
+        <!-- New message container -->
+        <div id="form-message" class="hidden" role="alert" style="margin-bottom: 20px; padding: 10px; border-radius: 5px;"></div>
+
+        <form id="contact-form" onsubmit="submitForm(event)">
+            <input type="text" name="Your Name" placeholder="Your Name" required>
+            <input type="email" name="Your Email" placeholder="Your Email" required>
+            <input type="text" name="Company Name" placeholder="Company Name">
+            <textarea name="How may I be of service!" placeholder="How may I be of service!" rows="5"></textarea>
+            <button type="submit" id="submit-button">Send Message</button>
+        </form>
+    </section>
+
+  </main>
+
+ <footer>
+    <p>© 2023 Michael Cessaro</p>
+    <p>
+      <a href="https://linkedin.com" target="_blank">LinkedIn</a> • 
+      <a href="https://github.com" target="_blank">GitHub</a>
+    </p>
+  </footer>
+
+  <script>
+      const API_URL = 'https://5507otgk28.execute-api.us-east-1.amazonaws.com/dev';
+
+      function displayMessage(message, isSuccess) {
+          const msgBox = document.getElementById('form-message');
+          msgBox.textContent = message;
+          msgBox.classList.remove('hidden');
+          
+          if (isSuccess) {
+              msgBox.style.backgroundColor = '#d4edda'; // Light green
+              msgBox.style.color = '#155724'; // Dark green text
+              msgBox.style.border = '1px solid #c3e6cb';
+          } else {
+              msgBox.style.backgroundColor = '#f8d7da'; // Light red/pink
+              msgBox.style.color = '#721c24'; // Dark red text
+              msgBox.style.border = '1px solid #f5c6cb';
+          }
+
+          // Automatically hide after 5 seconds
+          setTimeout(() => msgBox.classList.add('hidden'), 5000);
+      }
+      
+      function submitForm(event) {
+          event.preventDefault(); 
+          
+          const form = document.getElementById('contact-form');
+          const submitButton = document.getElementById('submit-button');
+          const msgBox = document.getElementById('form-message');
+
+          // Reset and disable button
+          msgBox.classList.add('hidden');
+          submitButton.textContent = 'Sending...';
+          submitButton.disabled = true;
+
+          const formData = new FormData(form);
+          const urlEncodedData = new URLSearchParams(formData).toString();
+
+          fetch(API_URL, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: urlEncodedData 
+          })
+          .then(response => {
+              if (!response.ok) {
+                  // Throw error with status to be caught below
+                  throw new Error(`Server error: Status ${response.status}`);
+              }
+              // Assuming a successful API response is 200/202, we don't need to parse JSON 
+              // unless the Lambda explicitly returns a specific JSON payload.
+              return response.text(); 
+          })
+          .then(data => {
+              // 3. Success Feedback
+              displayMessage('🥳 Message Sent! Thank you for contacting Michael Cessaro.', true);
+              form.reset(); // Clear form fields
+          })
+          .catch(error => {
+              // 4. Error Feedback
+              console.error('Error submitting form:', error);
+              displayMessage('❌ Oops! There was an issue sending your message. Please try again.', false);
+          })
+          .finally(() => {
+              // Re-enable button
+              submitButton.textContent = 'Send Message';
+              submitButton.disabled = false;
+          });
+      }
+  </script>
+  </body>
 </html>
